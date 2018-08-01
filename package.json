@@ -1,6 +1,6 @@
 {
   "name": "ravencoin-core",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A modern Ravencoin Core REST and RPC client.",
   "keywords": [
     "ravencoin",
@@ -28,8 +28,7 @@
     "dependencies": "docker-compose up -d ravend ravend-ssl ravend-username-only",
     "lint": "eslint src test",
     "test": "NODE_ENV=test mocha $npm_package_options_mocha",
-    "testdocker": "docker-compose run --rm sut",
-    "version": "npm run changelog --future-release=$npm_package_version && npm run transpile && git add -A CHANGELOG.md dist"
+    "testdocker": "docker-compose run --rm sut"
   },
   "dependencies": {
     "@uphold/request-logger": "^2.0.0",
