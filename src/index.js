@@ -34,9 +34,9 @@ function source(...args) {
  */
 
 const networks = {
-  mainnet: 8332,
-  regtest: 18332,
-  testnet: 18332
+  mainnet: 8766,
+  regtest: 18766,
+  testnet: 18766
 };
 
 /**
@@ -48,7 +48,7 @@ class Client {
     agentOptions,
     headers = false,
     host = 'localhost',
-    logger = debugnyan('bitcoin-core'),
+    logger = debugnyan('ravencoin-core'),
     network = 'mainnet',
     password,
     port,
@@ -78,7 +78,7 @@ class Client {
     let unsupported = [];
 
     if (version) {
-      // Capture X.Y.Z when X.Y.Z.A is passed to support oddly formatted Bitcoin Core
+      // Capture X.Y.Z when X.Y.Z.A is passed to support oddly formatted Ravencoin Core
       // versions such as 0.15.0.1.
       const result = /[0-9]+\.[0-9]+\.[0-9]+/.exec(version);
 
@@ -281,7 +281,7 @@ _.forOwn(methods, (range, method) => {
 export default Client;
 
 /**
- * Export Client class (CJS) for compatibility with require('bitcoin-core').
+ * Export Client class (CJS) for compatibility with require('ravencoin-core').
  */
 
 module.exports = Client;

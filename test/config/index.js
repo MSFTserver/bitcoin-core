@@ -16,21 +16,21 @@ function getHost(name) {
  */
 
 const config = {
-  bitcoind: {
-    host: getHost('bitcoind'),
+  ravend: {
+    host: getHost('ravend'),
     password: 'bar',
-    port: 18333,
+    port: 18767,
     username: 'foo'
   },
-  bitcoindSsl: {
-    host: getHost('bitcoind-ssl'),
+  ravendSsl: {
+    host: getHost('ravend-ssl'),
     password: 'bar',
-    port: 18334,
+    port: 18768,
     username: 'foo'
   },
-  bitcoindUsernameOnly: {
-    host: getHost('bitcoind-username-only'),
-    port: 18335,
+  ravendUsernameOnly: {
+    host: getHost('ravend-username-only'),
+    port: 18769,
     username: 'foo'
   }
 };

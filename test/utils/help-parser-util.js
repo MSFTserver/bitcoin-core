@@ -6,7 +6,7 @@
 import _ from 'lodash';
 
 /**
- * Parse `help` from bitcoin output.
+ * Parse `help` from ravencoin output.
  */
 
 export default function parse(help) {

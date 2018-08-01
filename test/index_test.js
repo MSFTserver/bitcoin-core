@@ -19,7 +19,7 @@ import should from 'should';
  */
 
 before(async () => {
-  const client = new Client(config.bitcoind);
+  const client = new Client(config.ravend);
   const [tip] = await client.getChainTips();
 
   if (tip.height === 200) {
@@ -38,12 +38,12 @@ afterEach(() => {
 });
 
 describe('Client', () => {
-  const client = new Client(config.bitcoind);
+  const client = new Client(config.ravend);
 
   describe('constructor', () => {
     it('should throw an error if network is invalid', () => {
       try {
-        new Client(_.defaults({ network: 'foo' }, config.bitcoind)); // eslint-disable-line no-new
+        new Client(_.defaults({ network: 'foo' }, config.ravend)); // eslint-disable-line no-new
 
         should.fail();
       } catch (error) {
@@ -69,19 +69,19 @@ describe('Client', () => {
     });
 
     it('should have default port set to `mainnet`\'s one', () => {
-      new Client().port.should.equal(8332);
+      new Client().port.should.equal(8766);
     });
 
-    it('should set default to port `8332` if network is `mainnet`', () => {
-      new Client({ network: 'mainnet' }).port.should.equal(8332);
+    it('should set default to port `8766` if network is `mainnet`', () => {
+      new Client({ network: 'mainnet' }).port.should.equal(8766);
     });
 
-    it('should set default to port `18332` if network is `testnet`', () => {
-      new Client({ network: 'testnet' }).port.should.equal(18332);
+    it('should set default to port `18766` if network is `testnet`', () => {
+      new Client({ network: 'testnet' }).port.should.equal(18766);
     });
 
-    it('should set default to port `18332` if network is `regtest`', () => {
-      new Client({ network: 'regtest' }).port.should.equal(18332);
+    it('should set default to port `18766` if network is `regtest`', () => {
+      new Client({ network: 'regtest' }).port.should.equal(18766);
     });
 
     it('should not have ssl enabled by default', () => {
@@ -101,7 +101,7 @@ describe('Client', () => {
   describe('authentication', () => {
     it('should throw an error if credentials are invalid', async () => {
       try {
-        await new Client(_.defaults({ password: 'biz', username: 'foo' }, config.bitcoind)).getDifficulty();
+        await new Client(_.defaults({ password: 'biz', username: 'foo' }, config.ravend)).getDifficulty();
       } catch (e) {
         e.should.be.an.instanceOf(RpcError);
         e.message.should.equal('Unauthorized');
@@ -111,7 +111,7 @@ describe('Client', () => {
     });
 
     it('should support username only authentication', async () => {
-      const difficulty = await new Client(config.bitcoindUsernameOnly).getDifficulty();
+      const difficulty = await new Client(config.ravendUsernameOnly).getDifficulty();
 
       difficulty.should.equal(0);
     });
@@ -123,7 +123,7 @@ describe('Client', () => {
 
       _.times(5, batch.push({ method: 'getnewaddress' }));
 
-      const addresses = await new Client(config.bitcoind).command(batch);
+      const addresses = await new Client(config.ravend).command(batch);
 
       addresses.should.have.length(batch.length);
     });
@@ -131,7 +131,7 @@ describe('Client', () => {
     it('should support batch request parameters', async () => {
       const batch = [{ method: 'getnewaddress' }, { method: 'validateaddress', parameters: ['mkteeBFmGkraJaWN5WzqHCjmbQWVrPo5X3'] }];
 
-      const [newAddress, addressValidation] = await new Client(config.bitcoind).command(batch);
+      const [newAddress, addressValidation] = await new Client(config.ravend).command(batch);
 
       addressValidation.should.have.properties('address', 'ismine', 'isvalid', 'scriptPubKey');
       newAddress.should.be.a.String();
@@ -140,7 +140,7 @@ describe('Client', () => {
     it('should return an error if one of the request fails', async () => {
       const batch = [{ method: 'foobar' }, { method: 'validateaddress', parameters: ['mkteeBFmGkraJaWN5WzqHCjmbQWVrPo5X3'] }];
 
-      const [newAddressError, addressValidation] = await new Client(config.bitcoind).command(batch);
+      const [newAddressError, addressValidation] = await new Client(config.ravend).command(batch);
 
       addressValidation.should.have.properties('address', 'ismine', 'isvalid', 'scriptPubKey');
       newAddressError.should.be.an.instanceOf(RpcError);
@@ -151,14 +151,14 @@ describe('Client', () => {
 
   describe('headers', () => {
     it('should return the response headers if `headers` is enabled', async () => {
-      const [info, headers] = await new Client(_.defaults({ headers: true }, config.bitcoind)).getInfo();
+      const [info, headers] = await new Client(_.defaults({ headers: true }, config.ravend)).getInfo();
 
       info.should.be.an.Object();
       headers.should.have.keys('date', 'connection', 'content-length', 'content-type');
     });
 
     it('should return the response headers if `headers` is enabled using callbacks', done => {
-      new Client(_.defaults({ headers: true }, config.bitcoind)).getInfo((err, [info, headers]) => {
+      new Client(_.defaults({ headers: true }, config.ravend)).getInfo((err, [info, headers]) => {
         should.not.exist(err);
 
         info.should.be.an.Object();
@@ -174,7 +174,7 @@ describe('Client', () => {
 
       _.times(5, () => batch.push({ method: 'getnewaddress' }));
 
-      const [addresses, headers] = await new Client(_.defaults({ headers: true }, config.bitcoind)).command(batch);
+      const [addresses, headers] = await new Client(_.defaults({ headers: true }, config.ravend)).command(batch);
 
       addresses.should.have.length(batch.length);
       headers.should.have.keys('date', 'connection', 'content-length', 'content-type');
@@ -185,7 +185,7 @@ describe('Client', () => {
 
       _.times(5, () => batch.push({ method: 'getnewaddress' }));
 
-      new Client(_.defaults({ headers: true }, config.bitcoind)).command(batch, (err, [addresses, headers]) => {
+      new Client(_.defaults({ headers: true }, config.ravend)).command(batch, (err, [addresses, headers]) => {
         should.not.exist(err);
 
         addresses.should.have.length(batch.length);
@@ -209,13 +209,13 @@ describe('Client', () => {
 
     describe('getBalance()', () => {
       it('should return the total server\'s balance', async () => {
-        const balance = await new Client(config.bitcoind).getBalance();
+        const balance = await new Client(config.ravend).getBalance();
 
         balance.should.be.a.Number();
       });
 
       it('should support named parameters', async () => {
-        const client = new Client(_.defaults({ version: '0.15.0' }, config.bitcoind));
+        const client = new Client(_.defaults({ version: '0.15.0' }, config.ravend));
 
         // Make sure that the balance on the main wallet is always higher than the one on the test wallet.
         await client.generate(51);
@@ -231,7 +231,7 @@ describe('Client', () => {
 
     describe('getDifficulty()', () => {
       it('should return the proof-of-work difficulty', async () => {
-        const difficulty = await new Client(config.bitcoind).getDifficulty();
+        const difficulty = await new Client(config.ravend).getDifficulty();
 
         difficulty.should.be.a.String();
       });
@@ -239,7 +239,7 @@ describe('Client', () => {
 
     describe('getInfo()', () => {
       it('should return information about the node and the network', async () => {
-        const info = await new Client(config.bitcoind).getInfo();
+        const info = await new Client(config.ravend).getInfo();
 
         info.should.not.be.empty();
         info.errors.should.be.a.String();
@@ -247,7 +247,7 @@ describe('Client', () => {
     });
 
     describe('getNewAddress()', () => {
-      it('should return a new bitcoin address', async () => {
+      it('should return a new ravencoin address', async () => {
         await client.getNewAddress('test');
 
         const addresses = await client.getAddressesByAccount('test');
@@ -258,7 +258,7 @@ describe('Client', () => {
 
     describe('help()', () => {
       it('should return help', async () => {
-        const help = await new Client(config.bitcoind).help();
+        const help = await new Client(config.ravend).help();
 
         help.should.not.be.empty();
       });
@@ -273,14 +273,14 @@ describe('Client', () => {
           await client.sendToAddress(address, 0.1);
         }
 
-        const transactions = await new Client(config.bitcoind).listTransactions('test', 5);
+        const transactions = await new Client(config.ravend).listTransactions('test', 5);
 
         transactions.should.be.an.Array();
         transactions.length.should.be.greaterThanOrEqual(5);
       });
 
       it('should return the most recent list of transactions from all accounts using default count', async () => {
-        const transactions = await new Client(config.bitcoind).listTransactions('test');
+        const transactions = await new Client(config.ravend).listTransactions('test');
 
         transactions.should.be.an.Array();
         transactions.should.matchEach(value => {
@@ -310,13 +310,13 @@ describe('Client', () => {
           await client.sendToAddress(address, 0.1);
         }
 
-        let transactions = await new Client(_.defaults({ version: '0.15.0' }, config.bitcoind)).listTransactions({ account: 'test' });
+        let transactions = await new Client(_.defaults({ version: '0.15.0' }, config.ravend)).listTransactions({ account: 'test' });
 
         transactions.should.be.an.Array();
         transactions.length.should.be.greaterThanOrEqual(5);
 
         // Make sure `count` is read correctly.
-        transactions = await new Client(_.defaults({ version: '0.15.0' }, config.bitcoind)).listTransactions({ account: 'test', count: 1 });
+        transactions = await new Client(_.defaults({ version: '0.15.0' }, config.ravend)).listTransactions({ account: 'test', count: 1 });
 
         transactions.should.be.an.Array();
         transactions.should.have.length(1);
@@ -326,13 +326,13 @@ describe('Client', () => {
 
   describe('ssl', () => {
     it('should use `ssl.strict` by default when `ssl` is enabled', () => {
-      const sslClient = new Client(_.defaults({ host: config.bitcoindSsl.host, port: config.bitcoindSsl.port, ssl: true }, config.bitcoind));
+      const sslClient = new Client(_.defaults({ host: config.ravendSsl.host, port: config.ravendSsl.port, ssl: true }, config.ravend));
 
       sslClient.ssl.strict.should.be.true();
     });
 
     it('should throw an error if certificate is self signed by default', async () => {
-      const sslClient = new Client(_.defaults({ host: config.bitcoindSsl.host, port: config.bitcoindSsl.port, ssl: true }, config.bitcoind));
+      const sslClient = new Client(_.defaults({ host: config.ravendSsl.host, port: config.ravendSsl.port, ssl: true }, config.ravend));
 
       sslClient.ssl.strict.should.be.true();
 
@@ -356,10 +356,10 @@ describe('Client', () => {
             return;
           }
         },
-        host: config.bitcoindSsl.host,
-        port: config.bitcoindSsl.port,
+        host: config.ravendSsl.host,
+        port: config.ravendSsl.port,
         ssl: true
-      }, config.bitcoind));
+      }, config.ravend));
 
       const info = await sslClient.getInfo();
 
@@ -367,7 +367,7 @@ describe('Client', () => {
     });
 
     it('should establish a connection if certificate is self signed but `ssl.strict` is disabled', async () => {
-      const sslClient = new Client(_.defaults({ host: config.bitcoindSsl.host, port: config.bitcoindSsl.port, ssl: { enabled: true, strict: false } }, config.bitcoind));
+      const sslClient = new Client(_.defaults({ host: config.ravendSsl.host, port: config.ravendSsl.port, ssl: { enabled: true, strict: false } }, config.ravend));
       const info = await sslClient.getInfo();
 
       info.should.not.be.empty();
@@ -375,13 +375,13 @@ describe('Client', () => {
   });
 
   it('should have all the methods listed by `help`', async () => {
-    const help = await new Client(config.bitcoind).help();
+    const help = await new Client(config.ravend).help();
 
     _.difference(parse(help), _.invokeMap(Object.keys(methods), String.prototype.toLowerCase)).should.be.empty();
   });
 
   it('should support callbacks', done => {
-    new Client(config.bitcoind).help((err, help) => {
+    new Client(config.ravend).help((err, help) => {
       should.not.exist(err);
 
       help.should.not.be.empty();
@@ -392,7 +392,7 @@ describe('Client', () => {
 
   it('should throw an error if timeout is reached', async () => {
     try {
-      await new Client(_.defaults({ timeout: 0.1 }, config.bitcoind)).listAccounts();
+      await new Client(_.defaults({ timeout: 0.1 }, config.ravend)).listAccounts();
 
       should.fail();
     } catch (e) {
@@ -413,8 +413,8 @@ describe('Client', () => {
   });
 
   it('should accept valid versions', async () => {
-    await new Client(_.defaults({ version: '0.15.0.1' }, config.bitcoind)).getInfo();
-    await new Client(_.defaults({ version: '0.15.0' }, config.bitcoind)).getInfo();
+    await new Client(_.defaults({ version: '0.15.0.1' }, config.ravend)).getInfo();
+    await new Client(_.defaults({ version: '0.15.0' }, config.ravend)).getInfo();
   });
 
   it('should throw an error if version does not support a given method', async () => {
@@ -429,28 +429,28 @@ describe('Client', () => {
   });
 
   it('should throw an error with a generic message if one is not returned on the response', async () => {
-    nock(`http://${config.bitcoind.host}:${config.bitcoind.port}/`)
+    nock(`http://${config.ravend.host}:${config.ravend.port}/`)
       .post('/')
       .reply(200, '{ "result": null, "error": { "code": -32601 }, "id": "69837016239933"}');
 
     try {
-      await new Client(config.bitcoind).command('foobar');
+      await new Client(config.ravend).command('foobar');
 
       should.fail();
     } catch (e) {
       e.should.be.an.instanceOf(RpcError);
-      e.message.should.equal('An error occurred while processing the RPC call to bitcoind');
+      e.message.should.equal('An error occurred while processing the RPC call to ravend');
       e.code.should.equal(-32601);
     }
   });
 
   it('should throw an error if the response does not include a `result`', async () => {
-    nock(`http://${config.bitcoind.host}:${config.bitcoind.port}/`)
+    nock(`http://${config.ravend.host}:${config.ravend.port}/`)
       .post('/')
       .reply(200, '{ "error": null, "id": "69837016239933"}');
 
     try {
-      await new Client(config.bitcoind).command('foobar2');
+      await new Client(config.ravend).command('foobar2');
 
       should.fail();
     } catch (e) {
@@ -462,7 +462,7 @@ describe('Client', () => {
 
   it('should throw an error if a connection cannot be established', async () => {
     try {
-      await new Client(_.defaults({ port: 9897 }, config.bitcoind)).getDifficulty();
+      await new Client(_.defaults({ port: 9897 }, config.ravend)).getDifficulty();
 
       should.fail();
     } catch (e) {
@@ -557,7 +557,7 @@ describe('Client', () => {
 
     describe('getBlockchainInformation()', () => {
       it('should return blockchain information json-encoded by default', async () => {
-        const information = await new Client(config.bitcoind).getBlockchainInformation();
+        const information = await new Client(config.ravend).getBlockchainInformation();
 
         information.should.have.properties('bestblockhash', 'blocks', 'chain', 'chainwork', 'difficulty', 'headers', 'pruned', 'verificationprogress');
       });
@@ -565,7 +565,7 @@ describe('Client', () => {
 
     describe('getUnspentTransactionOutputs()', () => {
       it('should return unspent transaction outputs json-encoded by default', async () => {
-        const result = await new Client(config.bitcoind).getUnspentTransactionOutputs([{
+        const result = await new Client(config.ravend).getUnspentTransactionOutputs([{
           id: '0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206',
           index: 0
         }, {
@@ -578,7 +578,7 @@ describe('Client', () => {
       });
 
       it('should return unspent transaction outputs hex-encoded if extension is `hex`', async () => {
-        const result = await new Client(config.bitcoind).getUnspentTransactionOutputs([{
+        const result = await new Client(config.ravend).getUnspentTransactionOutputs([{
           id: '0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206',
           index: 0
         }, {
@@ -597,8 +597,8 @@ describe('Client', () => {
           id: '0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206',
           index: 1
         }];
-        const binaryUnspents = await new Client(config.bitcoind).getUnspentTransactionOutputs(outputs, { extension: 'bin' });
-        const hexUnspents = await new Client(config.bitcoind).getUnspentTransactionOutputs(outputs, { extension: 'hex' });
+        const binaryUnspents = await new Client(config.ravend).getUnspentTransactionOutputs(outputs, { extension: 'bin' });
+        const hexUnspents = await new Client(config.ravend).getUnspentTransactionOutputs(outputs, { extension: 'hex' });
 
         binaryUnspents.should.be.instanceOf(Buffer);
         hexUnspents.should.equal(`${binaryUnspents.toString('hex')}\n`);
@@ -607,8 +607,8 @@ describe('Client', () => {
 
     describe('getMemoryPoolContent()', () => {
       it('should return memory pool content json-encoded by default', async () => {
-        const content = await new Client(config.bitcoind).getMemoryPoolContent();
-        const transactions = await new Client(config.bitcoind).listTransactions('test');
+        const content = await new Client(config.ravend).getMemoryPoolContent();
+        const transactions = await new Client(config.ravend).listTransactions('test');
 
         Object.keys(content).length.should.be.greaterThanOrEqual(transactions.length);
       });
@@ -616,7 +616,7 @@ describe('Client', () => {
 
     describe('getMemoryPoolInformation()', () => {
       it('should return memory pool information json-encoded by default', async () => {
-        const information = await new Client(config.bitcoind).getMemoryPoolInformation();
+        const information = await new Client(config.ravend).getMemoryPoolInformation();
 
         information.should.have.keys('bytes', 'maxmempool', 'mempoolminfee', 'size', 'usage');
         information.bytes.should.be.a.Number();
@@ -629,7 +629,7 @@ describe('Client', () => {
 
     it('should throw an error if a method contains invalid arguments', async () => {
       try {
-        await new Client(config.bitcoind).getTransactionByHash('foobar');
+        await new Client(config.ravend).getTransactionByHash('foobar');
 
         should.fail();
       } catch (e) {
@@ -642,7 +642,7 @@ describe('Client', () => {
 
     it('should throw an error if a method in binary mode contains invalid arguments', async () => {
       try {
-        await new Client(config.bitcoind).getTransactionByHash('foobar', { extension: 'bin' });
+        await new Client(config.ravend).getTransactionByHash('foobar', { extension: 'bin' });
 
         should.fail();
       } catch (e) {

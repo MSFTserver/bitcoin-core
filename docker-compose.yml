@@ -6,13 +6,13 @@ sut:
   environment:
     - CI=true
   links:
-    - bitcoind
-    - bitcoind-ssl
-    - bitcoind-username-only
+    - ravend
+    - ravend-ssl
+    - ravend-username-only
   working_dir: /app
 
-bitcoind:
-  image: ruimarinho/bitcoin-core:0.15.0.1-alpine
+ravend:
+  image: ruimarinho/ravencoin-core:0.15.0.1-alpine
   command:
     -printtoconsole
     -regtest=1
@@ -21,14 +21,14 @@ bitcoind:
     -rpcallowip=172.17.0.0/16
     -rpcallowip=192.168.0.0/16
     -rpcpassword=bar
-    -rpcport=18333
+    -rpcport=18767
     -rpcuser=foo
     -server
   ports:
-    - 18333:18333
+    - 18767:18767
 
-bitcoind-ssl:
-  image: ruimarinho/bitcoin-core:0.11-alpine
+ravend-ssl:
+  image: ruimarinho/ravencoin-core:0.11-alpine
   command:
     -printtoconsole
     -regtest=1
@@ -37,19 +37,19 @@ bitcoind-ssl:
     -rpcallowip=172.17.0.0/16
     -rpcallowip=192.168.0.0/16
     -rpcpassword=bar
-    -rpcport=18334
+    -rpcport=18768
     -rpcssl
-    -rpcsslcertificatechainfile=/etc/ssl/bitcoind/cert.pem
-    -rpcsslprivatekeyfile=/etc/ssl/bitcoind/key.pem
+    -rpcsslcertificatechainfile=/etc/ssl/ravend/cert.pem
+    -rpcsslprivatekeyfile=/etc/ssl/ravend/key.pem
     -rpcuser=foo
     -server
   volumes:
-    - ./test/config/ssl:/etc/ssl/bitcoind
+    - ./test/config/ssl:/etc/ssl/ravend
   ports:
-    - 18334:18334
+    - 18768:18768
 
-bitcoind-username-only:
-  image: ruimarinho/bitcoin-core:0.11-alpine
+ravend-username-only:
+  image: ruimarinho/ravencoin-core:0.11-alpine
   command:
     -printtoconsole
     -regtest=1
@@ -57,8 +57,8 @@ bitcoind-username-only:
     -rpcallowip=10.211.0.0/16
     -rpcallowip=172.17.0.0/16
     -rpcallowip=192.168.0.0/16
-    -rpcport=18335
+    -rpcport=18769
     -rpcuser=foo
     -server
   ports:
-    - 18335:18335
+    - 18769:18769

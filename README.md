@@ -1,5 +1,5 @@
-# bitcoin-core
-A modern Bitcoin Core REST and RPC client to execute administrative tasks, wallet operations and queries about network and the blockchain.
+# ravencoin-core
+A modern Ravencoin Core REST and RPC client to execute administrative tasks, wallet operations and queries about network and the blockchain.
 
 ## Status
 [![npm version][npm-image]][npm-url] [![build status][travis-image]][travis-url]
@@ -8,7 +8,7 @@ A modern Bitcoin Core REST and RPC client to execute administrative tasks, walle
 Install the package via `npm`:
 
 ```sh
-npm install bitcoin-core --save
+npm install ravencoin-core --save
 ```
 
 ## Usage
@@ -17,7 +17,7 @@ npm install bitcoin-core --save
 1. `[agentOptions]` _(Object)_: Optional `agent` [options](https://github.com/request/request#using-optionsagentoptions) to configure SSL/TLS.
 2. `[headers=false]` _(boolean)_: Whether to return the response headers.
 3. `[host=localhost]` _(string)_: The host to connect to.
-4. `[logger=debugnyan('bitcoin-core')]` _(Function)_: Custom logger (by default, `debugnyan`).
+4. `[logger=debugnyan('ravencoin-core')]` _(Function)_: Custom logger (by default, `debugnyan`).
 5. `[network=mainnet]` _(string)_: The network
 6. `[password]` _(string)_: The RPC server user password.
 7. `[port=[network]]` _(string)_: The RPC server port.
@@ -30,17 +30,17 @@ npm install bitcoin-core --save
 
 ### Examples
 #### Using network mode
-The `network` will automatically determine the port to connect to, just like the `bitcoind` and `bitcoin-cli` commands.
+The `network` will automatically determine the port to connect to, just like the `ravend` and `raven-cli` commands.
 
 ```js
-const Client = require('bitcoin-core');
+const Client = require('ravencoin-core');
 const client = new Client({ network: 'regtest' });
 ```
 
 ##### Setting a custom port
 
 ```js
-const client = new Client({ port: 28332 });
+const client = new Client({ port: 28766 });
 ```
 
 #### Connecting to an SSL/TLS server with strict checking enabled
@@ -50,7 +50,7 @@ By default, when `ssl` is enabled, strict checking is implicitly enabled.
 const fs = require('fs');
 const client = new Client({
   agentOptions: {
-    ca: fs.readFileSync('/etc/ssl/bitcoind/cert.pem')
+    ca: fs.readFileSync('/etc/ssl/ravend/cert.pem')
   },
   ssl: true
 });
@@ -80,7 +80,7 @@ client.getInfo((error, help) => console.log(help));
 ```
 
 #### Returning headers in the response
-For compatibility with other Bitcoin Core clients.
+For compatibility with other Ravencoin Core clients.
 
 ```js
 const client = new Client({ headers: true });
@@ -152,22 +152,22 @@ client.getWork();
 To avoid potential issues with prototype references, all methods are still enumerable on the library client prototype.
 
 ### RPC
-Start the `bitcoind` with the RPC server enabled and optionally configure a username and password:
+Start the `ravend` with the RPC server enabled and optionally configure a username and password:
 
 ```sh
-docker run --rm -it ruimarinho/bitcoin-core:0.12-alpine -printtoconsole -rpcuser=foo -rpcpassword=bar -server
+docker run --rm -it MSFTserver/ravencoin-core:0.12-alpine -printtoconsole -rpcuser=foo -rpcpassword=bar -server
 ```
 
-These configuration values may also be set on the `bitcoin.conf` file of your platform installation.
+These configuration values may also be set on the `raven.conf` file of your platform installation.
 
-By default, port `8332` is used to listen for requests in `mainnet` mode, or `18332` in `testnet` or `regtest` modes. Use the `network` property to initialize the client on the desired mode and automatically set the respective default port. You can optionally set a custom port of your choice too.
+By default, port `8766` is used to listen for requests in `mainnet` mode, or `18766` in `testnet` or `regtest` modes. Use the `network` property to initialize the client on the desired mode and automatically set the respective default port. You can optionally set a custom port of your choice too.
 
 The RPC services binds to the localhost loopback network interface, so use `rpcbind` to change where to bind to and `rpcallowip` to whitelist source IP access.
 
 #### Methods
-All RPC [methods](src/methods.js) are exposed on the client interface as a camelcase'd version of those available on `bitcoind` (see examples below).
+All RPC [methods](src/methods.js) are exposed on the client interface as a camelcase'd version of those available on `ravend` (see examples below).
 
-For a more complete reference about which methods are available, check the [RPC documentation](https://bitcoin.org/en/developer-reference#remote-procedure-calls-rpcs) on the [Bitcoin Core Developer Reference website](https://bitcoin.org/en/developer-reference).
+For a more complete reference about which methods are available, check the [RPC documentation](https://bitcoin.org/en/developer-reference#remote-procedure-calls-rpcs) on the [Ravencoin Core Developer Reference website](https://bitcoin.org/en/developer-reference).
 
 ##### Examples
 
@@ -205,17 +205,17 @@ new Client().command(batch).then(([address, error]) => console.log(address, erro
 ```
 
 ### REST
-Support for the REST interface is still **experimental** and the API is still subject to change. These endpoints are also **unauthenticated** so [there are certain risks which you should be aware](https://github.com/bitcoin/bitcoin/blob/master/doc/REST-interface.md#risks), specifically of leaking sensitive data of the node if not correctly protected.
+Support for the REST interface is still **experimental** and the API is still subject to change. These endpoints are also **unauthenticated** so [there are certain risks which you should be aware](https://github.com/RavenProject/Ravencoin/blob/master/doc/REST-interface.md#risks), specifically of leaking sensitive data of the node if not correctly protected.
 
 Error handling is still fragile so avoid passing user input.
 
-Start the `bitcoind` with the REST server enabled:
+Start the `ravend` with the REST server enabled:
 
 ```sh
-docker run --rm -it ruimarinho/bitcoin-core:0.12-alpine -printtoconsole -server -rest
+docker run --rm -it MSFTserver/ravencoin-core:0.12-alpine -printtoconsole -server -rest
 ```
 
-These configuration values may also be set on the `bitcoin.conf` file of your platform installation. Use `txindex=1` if you'd like to enable full transaction query support (note: this will take a considerable amount of time on the first run).
+These configuration values may also be set on the `raven.conf` file of your platform installation. Use `txindex=1` if you'd like to enable full transaction query support (note: this will take a considerable amount of time on the first run).
 
 ### Methods
 
@@ -349,22 +349,22 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 3650 -nod
 ```
 
 #### Connecting via SSL
-On Bitcoin Core <0.12, you can start the `bitcoind` RPC server directly with SSL:
+On Ravencoin Core <0.12, you can start the `ravend` RPC server directly with SSL:
 
 ```sh
-docker run --rm -it -v $(PWD)/ssl:/etc/ssl ruimarinho/bitcoin-core:0.11-alpine -printtoconsole -rpcuser=foo -rpcpassword=bar -rpcssl -rpcsslcertificatechainfile=/etc/ssl/bitcoind/cert.pem -rpcsslprivatekeyfile=/etc/ssl/bitcoind/key.pem -server
+docker run --rm -it -v $(PWD)/ssl:/etc/ssl ruimarinho/ravencoin-core:0.11-alpine -printtoconsole -rpcuser=foo -rpcpassword=bar -rpcssl -rpcsslcertificatechainfile=/etc/ssl/ravend/cert.pem -rpcsslprivatekeyfile=/etc/ssl/ravend/key.pem -server
 ```
 
-On Bitcoin Core >0.12, use must use `stunnel` (`brew install stunnel` or `sudo apt-get install stunnel4`) or an HTTPS reverse proxy to configure SSL since the built-in support for SSL has been removed. The trade off with `stunnel` is performance and simplicity versus features, as it lacks more powerful capacities such as Basic Authentication and caching which are standard in reverse proxies.
+On Ravencoin Core >0.12, use must use `stunnel` (`brew install stunnel` or `sudo apt-get install stunnel4`) or an HTTPS reverse proxy to configure SSL since the built-in support for SSL has been removed. The trade off with `stunnel` is performance and simplicity versus features, as it lacks more powerful capacities such as Basic Authentication and caching which are standard in reverse proxies.
 
 You can use `stunnel` by configuring `stunnel.conf` with the following service requirements:
 
 ```
-[bitcoin]
-accept = 28332
-connect = 18332
-cert = /etc/ssl/bitcoind/cert.pem
-key = /etc/ssl/bitcoind/key.pem
+[ravencoin]
+accept = 28766
+connect = 18766
+cert = /etc/ssl/ravend/cert.pem
+key = /etc/ssl/ravend/key.pem
 ```
 
 The `key` option may be omitted if you concatenating your private and public certificates into a single `stunnel.pem` file.
@@ -372,32 +372,32 @@ The `key` option may be omitted if you concatenating your private and public cer
 On some versions of `stunnel` it is also possible to start a service using command line arguments. The equivalent would be:
 
 ```sh
-stunnel -d 28332 -r 127.0.0.1:18332 -p stunnel.pem -P ''
+stunnel -d 28766 -r 127.0.0.1:18766 -p stunnel.pem -P ''
 ```
 
 Then pass the public certificate to the client:
 
 ```js
-const Client = require('bitcoin-core');
+const Client = require('ravencoin-core');
 const fs = require('fs');
 const client = new Client({
   agentOptions: {
-    ca: fs.readFileSync('/etc/ssl/bitcoind/cert.pem')
+    ca: fs.readFileSync('/etc/ssl/ravend/cert.pem')
   },
-  port: 28332,
+  port: 28766,
   ssl: true
 });
 ```
 
 ## Logging
 
-By default, all requests made with `bitcoin-core` are logged using [uphold/debugnyan](https://github.com/uphold/debugnyan) with `bitcoin-core` as the logging namespace.
+By default, all requests made with `ravencoin-core` are logged using [uphold/debugnyan](https://github.com/uphold/debugnyan) with `ravencoin-core` as the logging namespace.
 
 Please note that all sensitive data is obfuscated before calling the logger.
 
 #### Example
 
-Example output defining the environment variable `DEBUG=bitcoin-core`:
+Example output defining the environment variable `DEBUG=ravencoin-core`:
 
 ```javascript
 const client = new Client();
@@ -405,21 +405,21 @@ const client = new Client();
 client.getTransactionByHash('b4dd08f32be15d96b7166fd77afd18aece7480f72af6c9c7f9c5cbeb01e686fe');
 
 // {
-//   "name": "bitcoin-core",
+//   "name": "ravencoin-core",
 //   "hostname": "localhost",
 //   "pid": 57908,
 //   "level": 20,
 //   "request": {
 //     "headers": {
-//       "host": "localhost:8332",
+//       "host": "localhost:8766",
 //       "accept": "application/json"
 //     },
 //     "id": "82cea4e5-2c85-4284-b9ec-e5876c84e67c",
 //     "method": "GET",
 //     "type": "request",
-//     "uri": "http://localhost:8332/rest/tx/b4dd08f32be15d96b7166fd77afd18aece7480f72af6c9c7f9c5cbeb01e686fe.json"
+//     "uri": "http://localhost:8766/rest/tx/b4dd08f32be15d96b7166fd77afd18aece7480f72af6c9c7f9c5cbeb01e686fe.json"
 //   },
-//   "msg": "Making request 82cea4e5-2c85-4284-b9ec-e5876c84e67c to GET http://localhost:8332/rest/tx/b4dd08f32be15d96b7166fd77afd18aece7480f72af6c9c7f9c5cbeb01e686fe.json",
+//   "msg": "Making request 82cea4e5-2c85-4284-b9ec-e5876c84e67c to GET http://localhost:8766/rest/tx/b4dd08f32be15d96b7166fd77afd18aece7480f72af6c9c7f9c5cbeb01e686fe.json",
 //   "time": "2017-02-07T14:40:35.020Z",
 //   "v": 0
 // }
@@ -430,9 +430,9 @@ client.getTransactionByHash('b4dd08f32be15d96b7166fd77afd18aece7480f72af6c9c7f9c
 A custom logger can be passed via the `logger` option and it should implement [bunyan's log levels](https://github.com/trentm/node-bunyan#levels).
 
 ## Tests
-Currently the test suite is tailored for Docker (including `docker-compose`) due to the multitude of different `bitcoind` configurations that are required in order to get the test suite passing.
+Currently the test suite is tailored for Docker (including `docker-compose`) due to the multitude of different `ravend` configurations that are required in order to get the test suite passing.
 
-To test using a local installation of `node.js` but with dependencies (e.g. `bitcoind`) running inside Docker:
+To test using a local installation of `node.js` but with dependencies (e.g. `ravend`) running inside Docker:
 
 ```sh
 npm run dependencies
@@ -455,6 +455,6 @@ npm version [<newversion> | major | minor | patch] -m "Release %s"
 MIT
 
 [npm-image]: https://img.shields.io/npm/v/bitcoin-core.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/bitcoin-core
+[npm-url]: https://npmjs.org/package/ravencoin-core
 [travis-image]: https://img.shields.io/travis/ruimarinho/bitcoin-core.svg?style=flat-square
 [travis-url]: https://travis-ci.org/ruimarinho/bitcoin-core
