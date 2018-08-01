@@ -352,7 +352,7 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 3650 -nod
 On Ravencoin Core <0.12, you can start the `ravend` RPC server directly with SSL:
 
 ```sh
-docker run --rm -it -v $(PWD)/ssl:/etc/ssl ruimarinho/ravencoin-core:0.11-alpine -printtoconsole -rpcuser=foo -rpcpassword=bar -rpcssl -rpcsslcertificatechainfile=/etc/ssl/ravend/cert.pem -rpcsslprivatekeyfile=/etc/ssl/ravend/key.pem -server
+docker run --rm -it -v $(PWD)/ssl:/etc/ssl MSFTserver/ravencoin-core:0.11-alpine -printtoconsole -rpcuser=foo -rpcpassword=bar -rpcssl -rpcsslcertificatechainfile=/etc/ssl/ravend/cert.pem -rpcsslprivatekeyfile=/etc/ssl/ravend/key.pem -server
 ```
 
 On Ravencoin Core >0.12, use must use `stunnel` (`brew install stunnel` or `sudo apt-get install stunnel4`) or an HTTPS reverse proxy to configure SSL since the built-in support for SSL has been removed. The trade off with `stunnel` is performance and simplicity versus features, as it lacks more powerful capacities such as Basic Authentication and caching which are standard in reverse proxies.
@@ -454,7 +454,7 @@ npm version [<newversion> | major | minor | patch] -m "Release %s"
 ## License
 MIT
 
-[npm-image]: https://img.shields.io/npm/v/bitcoin-core.svg?style=flat-square
+[npm-image]: https://img.shields.io/badge/npm-v1.0.0-brightgreen.svg
 [npm-url]: https://npmjs.org/package/ravencoin-core
-[travis-image]: https://img.shields.io/travis/ruimarinho/bitcoin-core.svg?style=flat-square
-[travis-url]: https://travis-ci.org/ruimarinho/bitcoin-core
+[travis-image]: https://img.shields.io/badge/Build-Beta-red.svg
+[travis-url]: https://travis-ci.org/MSFTserver/ravencoin-core
