@@ -1,6 +1,6 @@
 {
   "name": "ravencoin-core",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A modern Ravencoin Core REST and RPC client.",
   "keywords": [
     "ravencoin",
